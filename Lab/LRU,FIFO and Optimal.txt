@@ -1,0 +1,77 @@
+//fifo
+def f(pages,capacity):
+    cpu=list()
+    pagefaults=0
+    for i in pages:
+        if i not in cpu:
+            pagefaults+=1
+            if len(cpu)<capacity:
+                cpu.append(i)
+            else:
+                cpu.pop(0)
+                cpu.append(i)
+    return pagefaults
+
+
+pages = list(map(int, input('Enter the sequence of Pages: ').strip().split()))
+capacity = int(input('Enter maximum number of pages in a frame: '))
+
+print("\nThe number of Page Faults occurred in FIFO are: ", f(pages, capacity))
+
+
+LRU
+
+
+def f(pages,capacity):
+    cpu=list()
+    recent=list()
+    pagefaults=0
+    for i in pages:
+        if i not in cpu:
+            pagefaults+=1
+            recent.append(i)
+            if len(cpu)<capacity:
+                cpu.append(i)
+            else:
+                cpu.append(i)
+                index=cpu.index(recent[0])
+                cpu.pop(index)
+                recent.pop(index)
+        else:
+            if i in recent:
+                recent.pop(recent.index(i))
+                recent.append(i)
+            else:
+                recent.append(i)
+    return pagefaults
+
+pages = list(map(int, input('Enter the sequence of Pages: ').strip().split()))
+capacity = int(input('Enter maximum number of pages in a frame: '))
+
+print("\nThe number of Page Faults occurred in FIFO are: ", f(pages, capacity))
+
+
+Optimal
+
+def f(pages,memory_size):
+    memory = []
+    page_faults = 0
+
+    for page in pages:
+        if page not in memory:
+            if len(memory) < memory_size:
+                memory.append(page)
+            else:
+                # Find the page that will not be used for the longest time in the future
+                farthest_page = \
+                max([(p, pages[index + 1:].index(p) if p in pages[index + 1:] else float('inf')) for index, p in
+                     enumerate(memory)], key=lambda x: x[1])[0]
+                memory[memory.index(farthest_page)] = page
+            page_faults += 1
+
+    return page_faults
+
+pages = list(map(int, input('Enter the sequence of Pages: ').strip().split()))
+capacity = int(input('Enter maximum number of pages in a frame: '))
+
+print("\nThe number of Page Faults occurred in FIFO are: ", f(pages, capacity))

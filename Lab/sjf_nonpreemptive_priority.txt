@@ -1,0 +1,41 @@
+def sjf_non_preemptive_with_priority(processes, arrival_time, burst_time, priority):
+    n = len(processes)
+    waiting_time = [0] * n
+    completion_time = [0] * n
+    remaining_burst_time = burst_time.copy()
+    total_burst_time = sum(burst_time)
+    current_time = 0
+
+    while sum(remaining_burst_time) > 0:
+        min_burst_time = float('inf')
+        min_burst_time_index = -1
+
+        for i in range(n):
+            if arrival_time[i] <= current_time and remaining_burst_time[i] > 0:
+                if burst_time[i] < min_burst_time:
+                    min_burst_time = burst_time[i]
+                    min_burst_time_index = i
+                elif burst_time[i] == min_burst_time and priority[i] < priority[min_burst_time_index]:
+                    min_burst_time_index = i
+
+        if min_burst_time_index == -1:
+            current_time += 1
+        else:
+            completion_time[min_burst_time_index] = current_time + burst_time[min_burst_time_index]
+            waiting_time[min_burst_time_index] = current_time - arrival_time[min_burst_time_index]
+            current_time = completion_time[min_burst_time_index]
+            remaining_burst_time[min_burst_time_index] = 0
+
+    return waiting_time
+
+# Example usage
+processes = ["P1", "P2", "P3", "P4"]
+arrival_time = [0, 2, 4, 5]
+burst_time = [7, 4, 1, 4]
+priority = [4, 3, 1, 2]
+
+waiting_time = sjf_non_preemptive_with_priority(processes, arrival_time, burst_time, priority)
+
+# Print waiting time for each process
+for i in range(len(processes)):
+    print(f"Waiting time for {processes[i]}: {waiting_time[i]}")
